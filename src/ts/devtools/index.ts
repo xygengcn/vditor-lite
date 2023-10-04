@@ -1,36 +1,47 @@
-import {getMarkdown} from "../markdown/getMarkdown";
-import {addScript} from "../util/addScript";
+import { getMarkdown } from "../markdown/getMarkdown"
+import { addScript } from "../util/addScript"
 
 declare const echarts: {
-    init(element: HTMLElement): IEChart;
-};
+    init(element: HTMLElement): IEChart
+}
 
 export class DevTools {
-    public element: HTMLDivElement;
-    private ASTChart: IEChart;
+    public element: HTMLDivElement
+    private ASTChart: IEChart
 
     constructor() {
-        this.element = document.createElement("div");
-        this.element.className = "vditor-devtools";
-        this.element.innerHTML = '<div class="vditor-reset--error"></div><div style="height: 100%;"></div>';
+        this.element = document.createElement("div")
+        this.element.className = "vditor-devtools"
+        this.element.innerHTML =
+            '<div class="vditor-reset--error"></div><div style="height: 100%;"></div>'
     }
 
     public renderEchart(vditor: IVditor) {
         if (vditor.devtools.element.style.display !== "block") {
-            return;
+            return
         }
 
-        addScript(`${vditor.options.cdn}/dist/js/echarts/echarts.min.js`, "vditorEchartsScript").then(() => {
+        addScript(
+            `${vditor.options.cdn}/js/echarts/echarts.min.js`,
+            "vditorEchartsScript"
+        ).then(() => {
             if (!this.ASTChart) {
-                this.ASTChart = echarts.init(vditor.devtools.element.lastElementChild as HTMLDivElement);
+                this.ASTChart = echarts.init(
+                    vditor.devtools.element.lastElementChild as HTMLDivElement
+                )
             }
             try {
-                (this.element.lastElementChild as HTMLElement).style.display = "block";
-                this.element.firstElementChild.innerHTML = "";
+                ;(this.element.lastElementChild as HTMLElement).style.display =
+                    "block"
+                this.element.firstElementChild.innerHTML = ""
                 this.ASTChart.setOption({
                     series: [
                         {
-                            data: JSON.parse(vditor.lute.RenderEChartsJSON(getMarkdown(vditor))),
+                            data: JSON.parse(
+                                vditor.lute.RenderEChartsJSON(
+                                    getMarkdown(vditor)
+                                )
+                            ),
                             initialTreeDepth: -1,
                             label: {
                                 align: "left",
@@ -72,12 +83,13 @@ export class DevTools {
                         right: 15,
                         show: true,
                     },
-                });
-                this.ASTChart.resize();
+                })
+                this.ASTChart.resize()
             } catch (e) {
-                (this.element.lastElementChild as HTMLElement).style.display = "none";
-                this.element.firstElementChild.innerHTML = e;
+                ;(this.element.lastElementChild as HTMLElement).style.display =
+                    "none"
+                this.element.firstElementChild.innerHTML = e
             }
-        });
+        })
     }
 }

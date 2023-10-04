@@ -1,3 +1,17 @@
+# 删减版介绍
+
+这是基于Vditor的ir即时渲染（类似 Typora）模式删减版，主要改动点如下：
+
+- 移除分屏预览模式
+- 移除sv所见即所得模式
+- 移除toolbar工具栏
+- 移除outline大纲
+- 移除评论功能
+
+<br>
+
+# 官方的详解文档
+
 <p align="center">
 <img alt="Vditor" src="https://b3log.org/images/brand/vditor-128.png" />
 

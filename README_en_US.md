@@ -1,3 +1,16 @@
+# Introduction to the abridged version
+This is a reduced version of Vditor based IR mode (similar to Typora) mode, with the main changes as follows:
+
+- Remove WYSIWYG mode
+- Remove SV  mode
+- Remove toolbar
+- Remove outline
+- Remove comment
+
+<br>
+
+# Official Document
+
 <p align="center">
 <img alt="Vditor" src="https://b3log.org/images/brand/vditor-128.png" />
 

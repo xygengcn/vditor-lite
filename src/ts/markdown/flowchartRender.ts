@@ -1,25 +1,30 @@
-import {Constants} from "../constants";
-import {addScript} from "../util/addScript";
-import {flowchartRenderAdapter} from "./adapterRender";
+import { Constants } from "../constants"
+import { addScript } from "../util/addScript"
+import { flowchartRenderAdapter } from "./adapterRender"
 
 declare const flowchart: {
-    parse(text: string): { drawSVG: (type: HTMLElement) => void };
-};
+    parse(text: string): { drawSVG: (type: HTMLElement) => void }
+}
 
 export const flowchartRender = (element: HTMLElement, cdn = Constants.CDN) => {
-    const flowchartElements = flowchartRenderAdapter.getElements(element);
+    const flowchartElements = flowchartRenderAdapter.getElements(element)
     if (flowchartElements.length === 0) {
-        return;
+        return
     }
-    addScript(`${cdn}/dist/js/flowchart.js/flowchart.min.js`, "vditorFlowchartScript").then(() => {
+    addScript(
+        `${cdn}/js/flowchart.js/flowchart.min.js`,
+        "vditorFlowchartScript"
+    ).then(() => {
         flowchartElements.forEach((item: HTMLElement) => {
             if (item.getAttribute("data-processed") === "true") {
-                return;
+                return
             }
-            const flowchartObj = flowchart.parse(flowchartRenderAdapter.getCode(item));
-            item.innerHTML = "";
-            flowchartObj.drawSVG(item);
-            item.setAttribute("data-processed", "true");
-        });
-    });
-};
+            const flowchartObj = flowchart.parse(
+                flowchartRenderAdapter.getCode(item)
+            )
+            item.innerHTML = ""
+            flowchartObj.drawSVG(item)
+            item.setAttribute("data-processed", "true")
+        })
+    })
+}

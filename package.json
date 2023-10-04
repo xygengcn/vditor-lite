@@ -1,5 +1,5 @@
 {
-  "name": "vditor",
+  "name": "vditor-lite",
   "version": "3.9.6",
   "description": "♏ 易于使用的 Markdown 编辑器，为适配不同的应用场景而生",
   "author": "Vanessa <v@b3log.org> (http://vanessa.b3log.org)",
@@ -8,11 +8,7 @@
   "main": "dist/index.min.js",
   "funding": "https://ld246.com/sponsor",
   "files": [
-    "dist/*",
-    "src/index.ts",
-    "src/method.ts",
-    "src/ts/*",
-    "src/assets/*"
+    "dist/*"
   ],
   "dependencies": {
     "diff-match-patch": "^1.0.5"
