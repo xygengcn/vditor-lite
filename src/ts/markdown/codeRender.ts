@@ -55,12 +55,9 @@ export const codeRender = (element: HTMLElement) => {
             divElement.className = "vditor-copy"
             divElement.innerHTML = `<span aria-label="${
                 window.VditorI18n?.copy || "复制"
-            }"
-onmouseover="this.setAttribute('aria-label', '${
+            }" onmouseover="this.setAttribute('aria-label', '${
                 window.VditorI18n?.copy || "复制"
-            }')"
-class="vditor-tooltipped vditor-tooltipped__w"
-onclick="this.previousElementSibling.select();document.execCommand('copy');this.setAttribute('aria-label', '${
+            }')" class="vditor-tooltipped vditor-tooltipped__w" onclick="event.stopPropagation();this.previousElementSibling.select();document.execCommand('copy');this.setAttribute('aria-label', '${
                 window.VditorI18n?.copied || "已复制"
             }')">${iconHTML}</span>`
             const textarea = document.createElement("textarea")
