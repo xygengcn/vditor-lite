@@ -131,12 +131,12 @@ class Vditor extends VditorMethod {
 
     /** 聚焦到编辑器 */
     public focus() {
-        this.vditor.ir.element.focus()
+        this.vditor.ir?.element.focus()
     }
 
     /** 让编辑器失焦 */
     public blur() {
-        this.vditor.ir.element.blur()
+        this.vditor.ir?.element.blur()
     }
 
     /** 禁用编辑器 */
