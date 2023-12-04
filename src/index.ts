@@ -10,7 +10,6 @@ import { getMarkdown } from "./ts/markdown/getMarkdown"
 import { setLute } from "./ts/markdown/setLute"
 import { Outline } from "./ts/outline/index"
 import { Preview } from "./ts/preview/index"
-import { Resize } from "./ts/resize/index"
 import { Tip } from "./ts/tip/index"
 import { initUI, UIUnbindListener } from "./ts/ui/initUI"
 import { setCodeTheme } from "./ts/ui/setCodeTheme"
@@ -297,10 +296,6 @@ class Vditor extends VditorMethod {
         this.vditor.ir = new IR(this.vditor)
 
         this.vditor.undo = new Undo()
-
-        if (mergedOptions.resize.enable) {
-            this.vditor.resize = new Resize(this.vditor)
-        }
 
         if (mergedOptions.upload.url || mergedOptions.upload.handler) {
             this.vditor.upload = new Upload()

@@ -50,10 +50,6 @@ export const initUI = (vditor: IVditor) => {
         contentElement.appendChild(vditor.upload.element)
     }
 
-    if (vditor.options.resize.enable) {
-        contentElement.appendChild(vditor.resize.element)
-    }
-
     contentElement.appendChild(vditor.hint.element)
 
     contentElement.appendChild(vditor.tip.element)

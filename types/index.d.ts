@@ -565,13 +565,6 @@ interface IOutline {
     position: "left" | "right"
 }
 
-interface IResize {
-    position?: string
-    enable?: boolean
-
-    after?(height: number): void
-}
-
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
     /** RTL */
@@ -604,8 +597,6 @@ interface IOptions {
         index: number
     }
 
-    /** @link https://ld246.com/article/1549638745630#options-resize */
-    resize?: IResize
     /** @link https://ld246.com/article/1549638745630#options-counter */
     counter?: {
         /** 是否启用计数器。默认值: false */
@@ -730,9 +721,6 @@ interface IVditor {
         element: HTMLElement
         previewElement: HTMLElement
         render(vditor: IVditor, value?: string): void
-    }
-    resize?: {
-        element: HTMLElement
     }
     hint: {
         timeId: number

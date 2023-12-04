@@ -74,10 +74,6 @@ export class Options {
             image: {
                 isPreview: true,
             },
-            resize: {
-                enable: false,
-                position: "bottom",
-            },
             theme: "classic",
 
             toolbarConfig: {
