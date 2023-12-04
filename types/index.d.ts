@@ -720,7 +720,6 @@ interface IVditor {
     options: IOptions
     originalInnerHTML: string
     lute: Lute
-    currentMode: "ir"
     outline: {
         element: HTMLElement
         render(vditor: IVditor): string

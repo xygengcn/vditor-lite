@@ -33,13 +33,12 @@ export const fixGSKeyBackspace = (
     if (
         event.keyCode === 229 &&
         event.code === "" &&
-        event.key === "Unidentified" &&
-        vditor.currentMode === "ir"
+        event.key === "Unidentified"
     ) {
         const blockElement = hasClosestBlock(startContainer)
         // 移动端的标点符号都显示为 299，因此需限定为空删除的条件
         if (blockElement && blockElement.textContent.trim() === "") {
-            vditor[vditor.currentMode].composingLock = true
+            vditor.ir.composingLock = true
             return false
         }
     }
@@ -69,8 +68,7 @@ export const fixCJKPosition = (
         hasClosestByMatchTag(range.startContainer, "LI")
     if (
         pLiElement &&
-        getSelectPosition(pLiElement, vditor[vditor.currentMode].element, range)
-            .start === 0
+        getSelectPosition(pLiElement, vditor.ir.element, range).start === 0
     ) {
         // https://github.com/Vanessa219/vditor/issues/1289 WKWebView切换输入法产生六分之一空格，造成光标错位
         if (pLiElement.nodeValue) {
@@ -121,7 +119,7 @@ export const insertEmptyBlock = (vditor: IVditor, position: InsertPosition) => {
             position,
             `<p data-block="0">${Constants.ZWSP}<wbr>\n</p>`
         )
-        setRangeByWbr(vditor[vditor.currentMode].element, range)
+        setRangeByWbr(vditor.ir.element, range)
         execAfterRender(vditor)
     }
 }
@@ -193,11 +191,7 @@ export const insertAfterBlock = (
     element: HTMLElement,
     blockElement: HTMLElement
 ) => {
-    const position = getSelectPosition(
-        element,
-        vditor[vditor.currentMode].element,
-        range
-    )
+    const position = getSelectPosition(element, vditor.ir.element, range)
     if (
         (event.key === "ArrowDown" &&
             element.textContent
@@ -218,7 +212,7 @@ export const insertAfterBlock = (
                 "afterend",
                 `<p data-block="0">${Constants.ZWSP}<wbr></p>`
             )
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
         } else {
             range.selectNodeContents(nextElement)
             range.collapse(true)
@@ -237,11 +231,7 @@ export const insertBeforeBlock = (
     element: HTMLElement,
     blockElement: HTMLElement
 ) => {
-    const position = getSelectPosition(
-        element,
-        vditor[vditor.currentMode].element,
-        range
-    )
+    const position = getSelectPosition(element, vditor.ir.element, range)
     if (
         (event.key === "ArrowUp" &&
             element.textContent.substr(0, position.start).indexOf("\n") ===
@@ -262,7 +252,7 @@ export const insertBeforeBlock = (
                 "beforebegin",
                 `<p data-block="0">${Constants.ZWSP}<wbr></p>`
             )
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
         } else {
             range.selectNodeContents(previousElement)
             range.collapse(false)
@@ -281,11 +271,9 @@ export const listToggle = (
     cancel = true
 ) => {
     const itemElement = hasClosestByMatchTag(range.startContainer, "LI")
-    vditor[vditor.currentMode].element
-        .querySelectorAll("wbr")
-        .forEach((wbr) => {
-            wbr.remove()
-        })
+    vditor.ir.element.querySelectorAll("wbr").forEach((wbr) => {
+        wbr.remove()
+    })
     range.insertNode(document.createElement("wbr"))
 
     if (cancel && itemElement) {
@@ -312,9 +300,8 @@ export const listToggle = (
                 "0"
             )
             if (!blockElement) {
-                vditor[vditor.currentMode].element.querySelector("wbr").remove()
-                blockElement =
-                    vditor[vditor.currentMode].element.querySelector("p")
+                vditor.ir.element.querySelector("wbr").remove()
+                blockElement = vditor.ir.element.querySelector("p")
                 blockElement.innerHTML = "<wbr>"
             }
             if (type === "check") {
@@ -405,11 +392,9 @@ export const listIndent = (
             }
         })
 
-        vditor[vditor.currentMode].element
-            .querySelectorAll("wbr")
-            .forEach((wbr) => {
-                wbr.remove()
-            })
+        vditor.ir.element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove()
+        })
         range.insertNode(document.createElement("wbr"))
         const liParentElement = previousElement.parentElement
 
@@ -433,20 +418,18 @@ export const listIndent = (
             liParentElement.outerHTML
         )
 
-        setRangeByWbr(vditor[vditor.currentMode].element, range)
+        setRangeByWbr(vditor.ir.element, range)
         const tempTopListElement = getTopList(range.startContainer)
         if (tempTopListElement) {
             tempTopListElement
-                .querySelectorAll(
-                    `.vditor-${vditor.currentMode}__preview[data-render='2']`
-                )
+                .querySelectorAll(`.vditor-ir__preview[data-render='2']`)
                 .forEach((item: HTMLElement) => {
                     processCodeRender(item, vditor)
                 })
         }
         execAfterRender(vditor)
     } else {
-        vditor[vditor.currentMode].element.focus()
+        vditor.ir.element.focus()
     }
 }
 
@@ -461,11 +444,9 @@ export const listOutdent = (
         "LI"
     )
     if (liParentLiElement) {
-        vditor[vditor.currentMode].element
-            .querySelectorAll("wbr")
-            .forEach((wbr) => {
-                wbr.remove()
-            })
+        vditor.ir.element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove()
+        })
         range.insertNode(document.createElement("wbr"))
 
         const liParentElement = liElement.parentElement
@@ -517,20 +498,18 @@ export const listOutdent = (
             topListElement.outerHTML
         )
 
-        setRangeByWbr(vditor[vditor.currentMode].element, range)
+        setRangeByWbr(vditor.ir.element, range)
         const tempTopListElement = getTopList(range.startContainer)
         if (tempTopListElement) {
             tempTopListElement
-                .querySelectorAll(
-                    `.vditor-${vditor.currentMode}__preview[data-render='2']`
-                )
+                .querySelectorAll(`.vditor-ir__preview[data-render='2']`)
                 .forEach((item: HTMLElement) => {
                     processCodeRender(item, vditor)
                 })
         }
         execAfterRender(vditor)
     } else {
-        vditor[vditor.currentMode].element.focus()
+        vditor.ir.element.focus()
     }
 }
 
@@ -652,11 +631,7 @@ export const fixList = (
             event.key === "Backspace" &&
             !liElement.previousElementSibling &&
             range.toString() === "" &&
-            getSelectPosition(
-                liElement,
-                vditor[vditor.currentMode].element,
-                range
-            ).start === 0
+            getSelectPosition(liElement, vditor.ir.element, range).start === 0
         ) {
             // 光标位于点和第一个字符中间时，无法删除 li 元素
             if (liElement.nextElementSibling) {
@@ -668,7 +643,7 @@ export const fixList = (
             } else {
                 liElement.parentElement.outerHTML = `<p data-block="0"><wbr>${liElement.innerHTML}</p>`
             }
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -691,7 +666,7 @@ export const fixList = (
             range.selectNodeContents(liElement.previousElementSibling)
             range.collapse(false)
             liElement.remove()
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -788,7 +763,7 @@ export const fixMarkdown = (
                 tableHeaderMD.substring(3, tableHeaderMD.length - 3) +
                 "\n|<wbr>"
             pElement.outerHTML = vditor.lute.SpinVditorDOM(tableHeaderMD)
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             scrollCenter(vditor)
             event.preventDefault()
@@ -810,7 +785,7 @@ export const fixMarkdown = (
                 `${pInnerHTML}<hr data-block="0"><p data-block="0"><wbr>\n</p>`
             )
             pElement.remove()
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             scrollCenter(vditor)
             event.preventDefault()
@@ -822,7 +797,7 @@ export const fixMarkdown = (
             pElement.outerHTML = vditor.lute.SpinVditorIRDOM(
                 pElement.innerHTML + '<p data-block="0"><wbr>\n</p>'
             )
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             scrollCenter(vditor)
             event.preventDefault()
@@ -839,8 +814,7 @@ export const fixMarkdown = (
         !event.altKey &&
         !event.shiftKey &&
         pElement.textContent.trimRight().split("\n").length > 1 &&
-        getSelectPosition(pElement, vditor[vditor.currentMode].element, range)
-            .start === 0
+        getSelectPosition(pElement, vditor.ir.element, range).start === 0
     ) {
         const lastElement = getLastNode(
             pElement.previousElementSibling
@@ -853,7 +827,7 @@ export const fixMarkdown = (
             `<wbr>${pElement.innerHTML}`
         )
         pElement.remove()
-        setRangeByWbr(vditor[vditor.currentMode].element, range)
+        setRangeByWbr(vditor.ir.element, range)
         return false
     }
     return false
@@ -1169,7 +1143,7 @@ export const fixTable = (
             if (!previousCellElement && tableElement) {
                 if (tableElement.textContent.trim() === "") {
                     tableElement.outerHTML = `<p data-block="0"><wbr>\n</p>`
-                    setRangeByWbr(vditor[vditor.currentMode].element, range)
+                    setRangeByWbr(vditor.ir.element, range)
                 } else {
                     range.setStartBefore(tableElement)
                     range.collapse(true)
@@ -1231,21 +1205,17 @@ export const fixTable = (
 
         // 剧中
         if (matchHotKey("⇧⌘C", event)) {
-            if (vditor.currentMode === "ir") {
-                setTableAlign(tableElement, "center")
-                execAfterRender(vditor)
-                event.preventDefault()
-                return true
-            }
+            setTableAlign(tableElement, "center")
+            execAfterRender(vditor)
+            event.preventDefault()
+            return true
         }
         // 剧右
         if (matchHotKey("⇧⌘R", event)) {
-            if (vditor.currentMode === "ir") {
-                setTableAlign(tableElement, "right")
-                execAfterRender(vditor)
-                event.preventDefault()
-                return true
-            }
+            setTableAlign(tableElement, "right")
+            execAfterRender(vditor)
+            event.preventDefault()
+            return true
         }
     }
     return false
@@ -1288,7 +1258,7 @@ export const fixCodeBlock = (
     ) {
         const codePosition = getSelectPosition(
             codeRenderElement,
-            vditor[vditor.currentMode].element,
+            vditor.ir.element,
             range
         )
         if (
@@ -1298,7 +1268,7 @@ export const fixCodeBlock = (
             range.toString() === ""
         ) {
             codeRenderElement.parentElement.outerHTML = `<p data-block="0"><wbr>${codeRenderElement.firstElementChild.innerHTML}</p>`
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -1341,16 +1311,13 @@ export const fixBlockquote = (
             !isCtrl(event) &&
             !event.shiftKey &&
             !event.altKey &&
-            getSelectPosition(
-                blockquoteElement,
-                vditor[vditor.currentMode].element,
-                range
-            ).start === 0
+            getSelectPosition(blockquoteElement, vditor.ir.element, range)
+                .start === 0
         ) {
             // Backspace: 光标位于引用中的第零个字符，仅删除引用标签
             range.insertNode(document.createElement("wbr"))
             blockquoteElement.outerHTML = blockquoteElement.innerHTML
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -1375,11 +1342,7 @@ export const fixBlockquote = (
                 pElement.remove()
             } else if (
                 pElement.innerHTML.endsWith("\n\n") &&
-                getSelectPosition(
-                    pElement,
-                    vditor[vditor.currentMode].element,
-                    range
-                ).start ===
+                getSelectPosition(pElement, vditor.ir.element, range).start ===
                     pElement.textContent.length - 1
             ) {
                 // 软换行
@@ -1395,7 +1358,7 @@ export const fixBlockquote = (
                     "afterend",
                     `<p data-block="0">${Constants.ZWSP}<wbr>\n</p>`
                 )
-                setRangeByWbr(vditor[vditor.currentMode].element, range)
+                setRangeByWbr(vditor.ir.element, range)
                 execAfterRender(vditor)
                 event.preventDefault()
                 return true
@@ -1486,7 +1449,7 @@ export const fixTask = (
                     taskItemElement.parentElement.remove()
                 }
             }
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -1592,7 +1555,7 @@ export const fixTask = (
                 )
                 document.querySelector("wbr").after(range.extractContents())
             }
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             scrollCenter(vditor)
             event.preventDefault()
@@ -1625,11 +1588,7 @@ export const fixDelete = (
         const previousElement = pElement.previousElementSibling
         if (
             previousElement &&
-            getSelectPosition(
-                pElement,
-                vditor[vditor.currentMode].element,
-                range
-            ).start === 0 &&
+            getSelectPosition(pElement, vditor.ir.element, range).start === 0 &&
             ((isFirefox() && previousElement.tagName === "HR") ||
                 previousElement.tagName === "TABLE")
         ) {
@@ -1647,7 +1606,7 @@ export const fixDelete = (
                 // 光标位于 hr 后进行删除
                 previousElement.remove()
             }
-            setRangeByWbr(vditor[vditor.currentMode].element, range)
+            setRangeByWbr(vditor.ir.element, range)
             execAfterRender(vditor)
             event.preventDefault()
             return true
@@ -1712,10 +1671,7 @@ export const paste = async (
         pasteCode(code: string): void
     }
 ) => {
-    if (
-        vditor[vditor.currentMode].element.getAttribute("contenteditable") !==
-        "true"
-    ) {
+    if (vditor.ir.element.getAttribute("contenteditable") !== "true") {
         return
     }
     event.stopPropagation()
@@ -1786,14 +1742,15 @@ export const paste = async (
                             return
                         }
                         const original = responseJSON.data.originalURL
-                        const imgElement: HTMLImageElement = vditor[
-                            vditor.currentMode
-                        ].element.querySelector(`img[src="${original}"]`)
+                        const imgElement: HTMLImageElement =
+                            vditor.ir.element.querySelector(
+                                `img[src="${original}"]`
+                            )
                         imgElement.src = responseJSON.data.url
-                        if (vditor.currentMode === "ir") {
-                            imgElement.previousElementSibling.previousElementSibling.innerHTML =
-                                responseJSON.data.url
-                        }
+
+                        imgElement.previousElementSibling.previousElementSibling.innerHTML =
+                            responseJSON.data.url
+
                         execAfterRender(vditor)
                     } else {
                         vditor.tip.show(xhr.responseText)
@@ -1807,14 +1764,13 @@ export const paste = async (
             }
             xhr.send(JSON.stringify({ url: src }))
         }
-        if (vditor.currentMode === "ir") {
-            return [
-                `<span class="vditor-ir__marker vditor-ir__marker--link">${Lute.EscapeHTMLStr(
-                    src
-                )}</span>`,
-                Lute.WalkContinue,
-            ]
-        }
+
+        return [
+            `<span class="vditor-ir__marker vditor-ir__marker--link">${Lute.EscapeHTMLStr(
+                src
+            )}</span>`,
+            Lute.WalkContinue,
+        ]
     }
 
     // 浏览器地址栏拷贝处理
@@ -1840,16 +1796,13 @@ export const paste = async (
     textHTML = Lute.Sanitize(textHTML)
 
     // process code
-    const height = vditor[vditor.currentMode].element.scrollHeight
+    const height = vditor.ir.element.scrollHeight
     const code = processPasteCode(textHTML, textPlain)
     const codeElement = hasClosestByMatchTag(event.target, "CODE")
     if (codeElement) {
         // 粘贴在代码位置
 
-        const position = getSelectPosition(
-            event.target,
-            vditor[vditor.currentMode].element
-        )
+        const position = getSelectPosition(event.target, vditor.ir.element)
         if (codeElement.parentElement.tagName !== "PRE") {
             // https://github.com/Vanessa219/vditor/issues/463
             textPlain += Constants.ZWSP
@@ -1865,7 +1818,7 @@ export const paste = async (
         )
         if (
             codeElement.parentElement?.nextElementSibling.classList.contains(
-                `vditor-${vditor.currentMode}__preview`
+                `vditor-ir__preview`
             )
         ) {
             codeElement.parentElement.nextElementSibling.innerHTML =
@@ -1887,14 +1840,14 @@ export const paste = async (
             tempElement.querySelectorAll(".vditor-copy").forEach((e) => {
                 e.remove()
             })
-            if (vditor.currentMode === "ir") {
-                renderers.HTML2VditorIRDOM = { renderLinkDest }
-                vditor.lute.SetJSRenderers({ renderers })
-                insertHTML(
-                    vditor.lute.HTML2VditorIRDOM(tempElement.innerHTML),
-                    vditor
-                )
-            }
+
+            renderers.HTML2VditorIRDOM = { renderLinkDest }
+            vditor.lute.SetJSRenderers({ renderers })
+            insertHTML(
+                vditor.lute.HTML2VditorIRDOM(tempElement.innerHTML),
+                vditor
+            )
+
             vditor.outline.render(vditor)
         } else if (files.length > 0) {
             if (vditor.options.upload.url || vditor.options.upload.handler) {
@@ -1939,33 +1892,25 @@ export const paste = async (
     if (blockElement) {
         // https://github.com/Vanessa219/vditor/issues/591
         const range = getEditorRange(vditor)
-        vditor[vditor.currentMode].element
-            .querySelectorAll("wbr")
-            .forEach((wbr) => {
-                wbr.remove()
-            })
+        vditor.ir.element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove()
+        })
         range.insertNode(document.createElement("wbr"))
         blockElement.outerHTML = vditor.lute.SpinVditorIRDOM(
             blockElement.outerHTML
         )
-        setRangeByWbr(vditor[vditor.currentMode].element, range)
+        setRangeByWbr(vditor.ir.element, range)
     }
-    vditor[vditor.currentMode].element
-        .querySelectorAll(
-            `.vditor-${vditor.currentMode}__preview[data-render='2']`
-        )
+    vditor.ir.element
+        .querySelectorAll(`.vditor-ir__preview[data-render='2']`)
         .forEach((item: HTMLElement) => {
             processCodeRender(item, vditor)
         })
 
     execAfterRender(vditor)
     if (
-        vditor[vditor.currentMode].element.scrollHeight - height >
-        Math.min(
-            vditor[vditor.currentMode].element.clientHeight,
-            window.innerHeight
-        ) /
-            2
+        vditor.ir.element.scrollHeight - height >
+        Math.min(vditor.ir.element.clientHeight, window.innerHeight) / 2
     ) {
         scrollCenter(vditor)
     }

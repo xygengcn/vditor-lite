@@ -27,38 +27,30 @@ class Undo {
     }
 
     public undo(vditor: IVditor) {
-        if (
-            vditor[vditor.currentMode].element.getAttribute(
-                "contenteditable"
-            ) === "false"
-        ) {
+        if (vditor.ir.element.getAttribute("contenteditable") === "false") {
             return
         }
-        if (this[vditor.currentMode].undoStack.length < 2) {
+        if (this.ir.undoStack.length < 2) {
             return
         }
-        const state = this[vditor.currentMode].undoStack.pop()
+        const state = this.ir.undoStack.pop()
         if (!state) {
             return
         }
-        this[vditor.currentMode].redoStack.push(state)
+        this.ir.redoStack.push(state)
         this.renderDiff(state, vditor)
-        this[vditor.currentMode].hasUndo = true
+        this.ir.hasUndo = true
     }
 
     public redo(vditor: IVditor) {
-        if (
-            vditor[vditor.currentMode].element.getAttribute(
-                "contenteditable"
-            ) === "false"
-        ) {
+        if (vditor.ir.element.getAttribute("contenteditable") === "false") {
             return
         }
-        const state = this[vditor.currentMode].redoStack.pop()
+        const state = this.ir.redoStack.pop()
         if (!state) {
             return
         }
-        this[vditor.currentMode].undoStack.push(state)
+        this.ir.undoStack.push(state)
         this.renderDiff(state, vditor, true)
     }
 
@@ -67,9 +59,9 @@ class Undo {
             return
         }
         if (
-            this[vditor.currentMode].undoStack.length !== 1 ||
-            this[vditor.currentMode].undoStack[0].length === 0 ||
-            this[vditor.currentMode].redoStack.length > 0
+            this.ir.undoStack.length !== 1 ||
+            this.ir.undoStack[0].length === 0 ||
+            this.ir.redoStack.length > 0
         ) {
             return
         }
@@ -86,46 +78,32 @@ class Undo {
             text
                 .replace("<wbr>", "")
                 .replace(" vditor-ir__node--expand", "") !==
-            this[vditor.currentMode].undoStack[0][0].diffs[0][1].replace(
-                "<wbr>",
-                ""
-            )
+            this.ir.undoStack[0][0].diffs[0][1].replace("<wbr>", "")
         ) {
             // 当还不没有存入 undo 栈时，按下 ctrl 后会覆盖 lastText
             return
         }
-        this[vditor.currentMode].undoStack[0][0].diffs[0][1] = text
-        this[vditor.currentMode].lastText = text
+        this.ir.undoStack[0][0].diffs[0][1] = text
+        this.ir.lastText = text
         // 不能添加 setSelectionFocus(cloneRange); 否则 windows chrome 首次输入会烂
     }
 
     public addToUndoStack(vditor: IVditor) {
         // afterRenderEvent.ts 已经 debounce
         const text = this.addCaret(vditor, true)
-        const diff = this.dmp.diff_main(
-            text,
-            this[vditor.currentMode].lastText,
-            true
-        )
-        const patchList = this.dmp.patch_make(
-            text,
-            this[vditor.currentMode].lastText,
-            diff
-        )
-        if (
-            patchList.length === 0 &&
-            this[vditor.currentMode].undoStack.length > 0
-        ) {
+        const diff = this.dmp.diff_main(text, this.ir.lastText, true)
+        const patchList = this.dmp.patch_make(text, this.ir.lastText, diff)
+        if (patchList.length === 0 && this.ir.undoStack.length > 0) {
             return
         }
-        this[vditor.currentMode].lastText = text
-        this[vditor.currentMode].undoStack.push(patchList)
-        if (this[vditor.currentMode].undoStack.length > this.stackSize) {
-            this[vditor.currentMode].undoStack.shift()
+        this.ir.lastText = text
+        this.ir.undoStack.push(patchList)
+        if (this.ir.undoStack.length > this.stackSize) {
+            this.ir.undoStack.shift()
         }
-        if (this[vditor.currentMode].hasUndo) {
-            this[vditor.currentMode].redoStack = []
-            this[vditor.currentMode].hasUndo = false
+        if (this.ir.hasUndo) {
+            this.ir.redoStack = []
+            this.ir.hasUndo = false
         }
     }
 
@@ -142,38 +120,29 @@ class Undo {
                     diff[0] = -diff[0]
                 })
             })
-            text = this.dmp.patch_apply(
-                redoPatchList,
-                this[vditor.currentMode].lastText
-            )[0]
+            text = this.dmp.patch_apply(redoPatchList, this.ir.lastText)[0]
         } else {
-            text = this.dmp.patch_apply(
-                state,
-                this[vditor.currentMode].lastText
-            )[0]
+            text = this.dmp.patch_apply(state, this.ir.lastText)[0]
         }
 
-        this[vditor.currentMode].lastText = text
-        vditor[vditor.currentMode].element.innerHTML = text
-        if (vditor.currentMode === "ir") {
-            vditor[vditor.currentMode].element
-                .querySelectorAll(
-                    `.vditor-${vditor.currentMode}__preview[data-render='2']`
-                )
-                .forEach((blockElement: HTMLElement) => {
-                    processCodeRender(blockElement, vditor)
-                })
-        }
+        this.ir.lastText = text
+        vditor.ir.element.innerHTML = text
 
-        if (!vditor[vditor.currentMode].element.querySelector("wbr")) {
+        vditor.ir.element
+            .querySelectorAll(`.vditor-ir__preview[data-render='2']`)
+            .forEach((blockElement: HTMLElement) => {
+                processCodeRender(blockElement, vditor)
+            })
+
+        if (!vditor.ir.element.querySelector("wbr")) {
             // Safari 第一次输入没有光标，需手动定位到结尾
             const range = getSelection().getRangeAt(0)
-            range.setEndBefore(vditor[vditor.currentMode].element)
+            range.setEndBefore(vditor.ir.element)
             range.collapse(false)
         } else {
             setRangeByWbr(
-                vditor[vditor.currentMode].element,
-                vditor[vditor.currentMode].element.ownerDocument.createRange()
+                vditor.ir.element,
+                vditor.ir.element.ownerDocument.createRange()
             )
             scrollCenter(vditor)
         }
@@ -186,10 +155,8 @@ class Undo {
             enableInput: true,
         })
 
-        vditor[vditor.currentMode].element
-            .querySelectorAll(
-                `.vditor-${vditor.currentMode}__preview[data-render='2']`
-            )
+        vditor.ir.element
+            .querySelectorAll(`.vditor-ir__preview[data-render='2']`)
             .forEach((item: HTMLElement) => {
                 processCodeRender(item, vditor)
             })
@@ -208,14 +175,10 @@ class Undo {
         let cloneRange: Range
         if (
             getSelection().rangeCount !== 0 &&
-            !vditor[vditor.currentMode].element.querySelector("wbr")
+            !vditor.ir.element.querySelector("wbr")
         ) {
             const range = getSelection().getRangeAt(0)
-            if (
-                vditor[vditor.currentMode].element.contains(
-                    range.startContainer
-                )
-            ) {
+            if (vditor.ir.element.contains(range.startContainer)) {
                 cloneRange = range.cloneRange()
                 const wbrElement = document.createElement("span")
                 wbrElement.className = "vditor-wbr"
@@ -225,9 +188,7 @@ class Undo {
         // 移除数学公式、echart 渲染 https://github.com/siyuan-note/siyuan/issues/537
         const cloneElement = vditor.ir.element.cloneNode(true) as HTMLElement
         cloneElement
-            .querySelectorAll(
-                `.vditor-${vditor.currentMode}__preview[data-render='1']`
-            )
+            .querySelectorAll(`.vditor-ir__preview[data-render='1']`)
             .forEach((item: HTMLElement) => {
                 if (!item.firstElementChild) {
                     return
@@ -257,13 +218,11 @@ class Undo {
                     item.firstElementChild.removeAttribute("data-math")
                 }
             })
-        const text = vditor[vditor.currentMode].element.innerHTML
-        vditor[vditor.currentMode].element
-            .querySelectorAll(".vditor-wbr")
-            .forEach((item) => {
-                item.remove()
-                // 使用 item.outerHTML = "" 会产生 https://github.com/Vanessa219/vditor/pull/686;
-            })
+        const text = vditor.ir.element.innerHTML
+        vditor.ir.element.querySelectorAll(".vditor-wbr").forEach((item) => {
+            item.remove()
+            // 使用 item.outerHTML = "" 会产生 https://github.com/Vanessa219/vditor/pull/686;
+        })
         if (setFocus && cloneRange) {
             setSelectionFocus(cloneRange)
         }

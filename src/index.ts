@@ -123,11 +123,6 @@ class Vditor extends VditorMethod {
         return getMarkdown(this.vditor)
     }
 
-    /** 获取编辑器当前编辑模式 */
-    public getCurrentMode() {
-        return this.vditor.currentMode
-    }
-
     /** 聚焦到编辑器 */
     public focus() {
         this.vditor.ir?.element.focus()
@@ -140,19 +135,13 @@ class Vditor extends VditorMethod {
 
     /** 禁用编辑器 */
     public disabled() {
-        this.vditor[this.vditor.currentMode].element.setAttribute(
-            "contenteditable",
-            "false"
-        )
+        this.vditor.ir.element.setAttribute("contenteditable", "false")
     }
 
     /** 解除编辑器禁用 */
     public enable() {
         this.vditor.undo.clearStack()
-        this.vditor[this.vditor.currentMode].element.setAttribute(
-            "contenteditable",
-            "true"
-        )
+        this.vditor.ir.element.setAttribute("contenteditable", "true")
     }
 
     /** 返回选中的字符串 */
@@ -167,7 +156,7 @@ class Vditor extends VditorMethod {
 
     /** 获取焦点位置 */
     public getCursorPosition() {
-        return getCursorPosition(this.vditor[this.vditor.currentMode].element)
+        return getCursorPosition(this.vditor.ir.element)
     }
 
     /** 上传是否还在进行中 */
@@ -296,7 +285,6 @@ class Vditor extends VditorMethod {
 
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
-            currentMode: mergedOptions.mode,
             element: id,
             hint: new Hint(mergedOptions.hint.extend),
             lute: undefined,

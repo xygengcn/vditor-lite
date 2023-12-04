@@ -108,7 +108,7 @@ export const scrollCenter = (vditor: IVditor) => {
     if (!vditor.options.typewriterMode) {
         return
     }
-    const editorElement = vditor[vditor.currentMode].element
+    const editorElement = vditor.ir.element
     const cursorTop = getCursorPosition(editorElement).top
     if (
         vditor.options.height === "auto" &&
@@ -205,9 +205,7 @@ export const selectEvent = (vditor: IVditor, editorElement: HTMLElement) => {
         editorElement.onmouseup = () => {
             setTimeout(() => {
                 // 鼠标放开后 range 没有即时更新
-                const selectText = getSelectText(
-                    vditor[vditor.currentMode].element
-                )
+                const selectText = getSelectText(vditor.ir.element)
                 if (selectText.trim()) {
                     if (vditor.options.select) {
                         vditor.options.select(selectText)

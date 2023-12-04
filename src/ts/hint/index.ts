@@ -90,7 +90,7 @@ export class Hint {
             return
         }
 
-        const editorElement = vditor[vditor.currentMode].element
+        const editorElement = vditor.ir.element
         const textareaPosition = getCursorPosition(editorElement)
         const x =
             textareaPosition.left +
@@ -166,32 +166,30 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`
         const range: Range = window.getSelection().getRangeAt(0)
 
         // 代码提示
-        if (vditor.currentMode === "ir") {
-            const preBeforeElement = hasClosestByAttribute(
-                range.startContainer,
-                "data-type",
-                "code-block-info"
+
+        const preBeforeElement = hasClosestByAttribute(
+            range.startContainer,
+            "data-type",
+            "code-block-info"
+        )
+        if (preBeforeElement) {
+            preBeforeElement.textContent = Constants.ZWSP + value.trimRight()
+            range.selectNodeContents(preBeforeElement)
+            range.collapse(false)
+            processAfterRender(vditor)
+            preBeforeElement.parentElement
+                .querySelectorAll("code")
+                .forEach((item) => {
+                    item.className = "language-" + value.trimRight()
+                })
+            processCodeRender(
+                preBeforeElement.parentElement.querySelector(
+                    ".vditor-ir__preview"
+                ),
+                vditor
             )
-            if (preBeforeElement) {
-                preBeforeElement.textContent =
-                    Constants.ZWSP + value.trimRight()
-                range.selectNodeContents(preBeforeElement)
-                range.collapse(false)
-                processAfterRender(vditor)
-                preBeforeElement.parentElement
-                    .querySelectorAll("code")
-                    .forEach((item) => {
-                        item.className = "language-" + value.trimRight()
-                    })
-                processCodeRender(
-                    preBeforeElement.parentElement.querySelector(
-                        ".vditor-ir__preview"
-                    ),
-                    vditor
-                )
-                this.recentLanguage = value.trimRight()
-                return
-            }
+            this.recentLanguage = value.trimRight()
+            return
         }
 
         range.setStart(range.startContainer, this.lastIndex)
@@ -202,11 +200,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`
         } else {
             insertHTML(value, vditor)
         }
-        if (
-            this.splitChar === ":" &&
-            value.indexOf(":") > -1 &&
-            vditor.currentMode === "ir"
-        ) {
+        if (this.splitChar === ":" && value.indexOf(":") > -1) {
             range.insertNode(document.createTextNode(" "))
         }
         range.collapse(false)

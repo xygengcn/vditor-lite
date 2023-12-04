@@ -8,7 +8,7 @@ import { hasClosestByClassName, hasClosestByMatchTag } from "./hasClosest"
 import { getSelectPosition } from "./selection"
 
 export const renderToc = (vditor: IVditor) => {
-    const editorElement = vditor[vditor.currentMode].element
+    const editorElement = vditor.ir.element
     let tocHTML = vditor.outline.render(vditor)
     if (tocHTML === "") {
         tocHTML = "[ToC]"
@@ -30,7 +30,7 @@ export const clickToc = (
 ) => {
     const spanElement = hasClosestByMatchTag(event.target, "SPAN")
     if (spanElement && hasClosestByClassName(spanElement, "vditor-toc")) {
-        const headingElement = vditor[vditor.currentMode].element.querySelector(
+        const headingElement = vditor.ir.element.querySelector(
             "#" + spanElement.getAttribute("data-target-id")
         ) as HTMLElement
         if (headingElement) {
@@ -42,8 +42,7 @@ export const clickToc = (
                 if (vditor.element.offsetTop < window.scrollY) {
                     window.scrollTo(window.scrollX, vditor.element.offsetTop)
                 }
-                vditor[vditor.currentMode].element.scrollTop =
-                    headingElement.offsetTop
+                vditor.ir.element.scrollTop = headingElement.offsetTop
             }
         }
         return
@@ -63,11 +62,8 @@ export const keydownToc = (
     ) {
         if (
             event.key === "Backspace" &&
-            getSelectPosition(
-                blockElement,
-                vditor[vditor.currentMode].element,
-                range
-            ).start === 0
+            getSelectPosition(blockElement, vditor.ir.element, range).start ===
+                0
         ) {
             blockElement.previousElementSibling.remove()
             execAfterRender(vditor)
@@ -92,11 +88,8 @@ export const keydownToc = (
     ) {
         if (
             event.key === "Delete" &&
-            getSelectPosition(
-                blockElement,
-                vditor[vditor.currentMode].element,
-                range
-            ).start >= blockElement.textContent.trimRight().length
+            getSelectPosition(blockElement, vditor.ir.element, range).start >=
+                blockElement.textContent.trimRight().length
         ) {
             blockElement.nextElementSibling.remove()
             execAfterRender(vditor)

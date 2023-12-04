@@ -33,10 +33,7 @@ export const outlineRender = (
     const tempElement = document.createElement("div")
     if (vditor) {
         vditor.lute.SetToC(true)
-        if (
-            vditor.currentMode === "ir" &&
-            !vditor.preview.element.contains(contentElement)
-        ) {
+        if (!vditor.preview.element.contains(contentElement)) {
             tempElement.innerHTML = vditor.lute.SpinVditorIRDOM(
                 "<p>[ToC]</p>" + tocHTML
             )

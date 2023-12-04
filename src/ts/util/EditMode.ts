@@ -17,7 +17,7 @@ export const setEditMode = (
     } else {
         markdownText = event
     }
-    if (vditor.currentMode === type && typeof event !== "string") {
+    if (typeof event !== "string") {
         return
     }
     if (vditor.options.preview.mode === "both" && type === "sv") {
@@ -32,7 +32,6 @@ export const setEditMode = (
     vditor.lute.SetVditorWYSIWYG(false)
     vditor.lute.SetVditorSV(false)
 
-    vditor.currentMode = "ir"
     vditor.ir.element.innerHTML = vditor.lute.Md2VditorIRDOM(markdownText)
     processAfterRender(vditor, {
         enableAddUndoStack: true,
@@ -59,7 +58,7 @@ export const setEditMode = (
     vditor.undo.clearStack()
     if (typeof event !== "string") {
         // 初始化不 focus
-        vditor[vditor.currentMode].element.focus()
+        vditor.ir.element.focus()
     }
     renderToc(vditor)
     setTypewriterPosition(vditor)

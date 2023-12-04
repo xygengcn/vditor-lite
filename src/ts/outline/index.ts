@@ -23,7 +23,7 @@ export class Outline {
             )
         } else {
             html = outlineRender(
-                vditor[vditor.currentMode].element,
+                vditor.ir.element,
                 this.element.lastElementChild,
                 vditor
             )
@@ -40,11 +40,7 @@ export class Outline {
         }
         if (focus && getSelection().rangeCount > 0) {
             const range = getSelection().getRangeAt(0)
-            if (
-                vditor[vditor.currentMode].element.contains(
-                    range.startContainer
-                )
-            ) {
+            if (vditor.ir.element.contains(range.startContainer)) {
                 setSelectionFocus(range)
             }
         }
