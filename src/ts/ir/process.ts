@@ -104,10 +104,6 @@ export const processAfterRender = (
             }
         }
 
-        if (vditor.devtools) {
-            vditor.devtools.renderEchart(vditor)
-        }
-
         if (options.enableAddUndoStack) {
             vditor.undo.addToUndoStack(vditor)
         }

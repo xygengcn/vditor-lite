@@ -41,10 +41,6 @@ export const initUI = (vditor: IVditor) => {
 
     contentElement.appendChild(vditor.preview.element)
 
-    //
-    // contentElement.appendChild(vditor.devtools.element)
-    //
-
     if (vditor.options.outline.position === "right") {
         vditor.outline.element.classList.add("vditor-outline--right")
         contentElement.appendChild(vditor.outline.element)
@@ -65,10 +61,10 @@ export const initUI = (vditor: IVditor) => {
     vditor.element.appendChild(contentElement)
 
     // pdf 输出
-    // vditor.element.insertAdjacentHTML(
-    //     "beforeend",
-    //     '<iframe id="vditorExportIframe" style="width: 100%;height: 0;border: 0"></iframe>'
-    // )
+    vditor.element.insertAdjacentHTML(
+        "beforeend",
+        '<iframe id="vditorExportIframe" style="width: 100%;height: 0;border: 0"></iframe>'
+    )
 
     setEditMode(vditor, vditor.options.mode, afterRender(vditor))
 

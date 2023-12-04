@@ -264,7 +264,6 @@ interface ITips {
     copy: string
     "delete-column": string
     "delete-row": string
-    devtools: string
     down: string
     downloadTip: string
     edit: string
@@ -722,10 +721,6 @@ interface IVditor {
     originalInnerHTML: string
     lute: Lute
     currentMode: "ir"
-    devtools?: {
-        element: HTMLDivElement
-        renderEchart(vditor: IVditor): void
-    }
     outline: {
         element: HTMLElement
         render(vditor: IVditor): string

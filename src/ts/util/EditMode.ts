@@ -20,9 +20,6 @@ export const setEditMode = (
     if (vditor.currentMode === type && typeof event !== "string") {
         return
     }
-    if (vditor.devtools) {
-        vditor.devtools.renderEchart(vditor)
-    }
     if (vditor.options.preview.mode === "both" && type === "sv") {
         vditor.preview.element.style.display = "block"
     } else {

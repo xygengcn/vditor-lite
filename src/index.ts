@@ -1,7 +1,6 @@
 import "./assets/less/index.less"
 import VditorMethod from "./method"
 import { VDITOR_VERSION } from "./ts/constants"
-// import { DevTools } from "./ts/devtools/index"
 import { Hint } from "./ts/hint/index"
 import { IR } from "./ts/ir/index"
 import { input as irInput } from "./ts/ir/input"
@@ -314,11 +313,6 @@ class Vditor extends VditorMethod {
         if (mergedOptions.resize.enable) {
             this.vditor.resize = new Resize(this.vditor)
         }
-
-        // 开发工具
-        // if (this.vditor.toolbar.elements.devtools) {
-        //     this.vditor.devtools = new DevTools()
-        // }
 
         if (mergedOptions.upload.url || mergedOptions.upload.handler) {
             this.vditor.upload = new Upload()
