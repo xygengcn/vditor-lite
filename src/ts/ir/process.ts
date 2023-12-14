@@ -75,8 +75,11 @@ export const processAfterRender = (
             return
         }
         const text = getMarkdown(vditor)
-        if (typeof vditor.options.input === "function" && options.enableInput) {
-            vditor.options.input(text)
+        if (
+            typeof vditor.options.change === "function" &&
+            options.enableInput
+        ) {
+            vditor.options.change(text)
         }
 
         // 字数统计

@@ -80,8 +80,8 @@ export const input = (
         }
 
         if (startSpace) {
-            if (typeof vditor.options.input === "function") {
-                vditor.options.input(getMarkdown(vditor))
+            if (typeof vditor.options.change === "function") {
+                vditor.options.change(getMarkdown(vditor))
             }
             return
         }
@@ -103,8 +103,8 @@ export const input = (
                     // FireFox https://github.com/Vanessa219/vditor/issues/239
                     previousNode.classList.remove("vditor-ir__node--expand")
                 }
-                if (typeof vditor.options.input === "function") {
-                    vditor.options.input(getMarkdown(vditor))
+                if (typeof vditor.options.change === "function") {
+                    vditor.options.change(getMarkdown(vditor))
                 }
                 return
             }

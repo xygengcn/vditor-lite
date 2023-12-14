@@ -97,6 +97,9 @@ class IR {
         })
 
         this.element.addEventListener("input", (event: InputEvent) => {
+            if (typeof vditor.options.input === "function") {
+                vditor.options.input(event)
+            }
             if (
                 event.inputType === "deleteByDrag" ||
                 event.inputType === "insertFromDrop"

@@ -678,8 +678,11 @@ interface IOptions {
     /** 编辑器异步渲染完成后的回调方法 */
     after?(): void
 
+    /** 值发生改变 */
+    change?(value: string): void
+
     /** 输入后触发 */
-    input?(value: string): void
+    input?(e: InputEvent): void
 
     /** 聚焦后触发  */
     focus?(value: string): void
